@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>          
+    <script src="lib/VSS.SDK.min.js"></script>
+    <script>
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformStyles: true
+        });
+
+        VSS.require("TFS/Dashboards/WidgetHelpers", function (WidgetHelpers) {
+            WidgetHelpers.IncludeWidgetStyles();
+            
+            VSS.register("Widget", function () {                
+                return {
+                    load: function (WidgetSettings) {
+                        var settings = JSON.parse(WidgetSettings.customSettings.data);
+
+                        var $title = $('#title');
+                        $title.text(settings?.title ?? 'Title');
+
+                        var $subtitle = $('#sub-title');
+                        $subtitle.text(settings?.subtitle ?? 'Subtitle');
+
+                        var $content = $('#content');
+                        $content.text(settings?.content ?? 'Content');
+
+                        return WidgetHelpers.WidgetStatusHelper.Success();
+                    }
+                }
+            });
+
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+</head>
+<body>
+    <div class="widget">
+        <div class="title-area">
+            <div class="title">
+                <div class="inner-title" id="title">T&iacute;tulo</div>
+                <div class="subtitle" id="sub-title">Subt&iacute;tulo</div>
+            </div>
+        </div>
+        <div class="content" id="content">
+            Conte&uacute;do
+        </div>
+    </div>
+</body>
+</html>

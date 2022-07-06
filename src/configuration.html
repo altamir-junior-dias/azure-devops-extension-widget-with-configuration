@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>          
+    <script src="lib/VSS.SDK.min.js"></script>
+    <script>
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformStyles: true
+        });
+    
+        VSS.require([
+            'TFS/Dashboards/WidgetHelpers'
+        ], (WidgetHelpers) => {
+            WidgetHelpers.IncludeWidgetConfigurationStyles();
+
+            VSS.register('WidgetConfiguration', () => {
+                return {
+                    load: (WidgetSettings, WidgetConfigurationContext) => {
+                        var changeSettings = () => {
+                            settings = {
+                                data: JSON.stringify({
+                                    title: $title.val(),
+                                    subtitle: $subtitle.val(),
+                                    content: $content.val()
+                                })
+                            };
+
+                            var eventName = WidgetHelpers.WidgetEvent.ConfigurationChange;
+                            var eventArgs = WidgetHelpers.WidgetEvent.Args(settings);
+                            WidgetConfigurationContext.notify(eventName, eventArgs);
+                        };
+
+                        var $title = $('#title');
+                        $title.val(WidgetSettings?.title ?? 'Title');
+                        $title.on("change", changeSettings);
+
+                        var $subtitle = $('#sub-title');
+                        $subtitle.val(WidgetSettings?.subtitle ?? 'Subtitle');
+                        $subtitle.on("change", changeSettings);
+
+                        var $content = $('#content');
+                        $content.val(WidgetSettings?.content ?? 'Content');
+                        $content.on("change", changeSettings);
+
+                        return WidgetHelpers.WidgetStatusHelper.Success()
+                    },
+                    onSave: (WidgetSettings) => {
+                        var $title = $('#title');
+                        var $subtitle = $('#sub-title');
+                        var $content = $('#content');
+
+                        var customSettings = {
+                            data: JSON.stringify({
+                                title: $title.val(),
+                                subtitle: $subtitle.val(),
+                                content: $content.val()
+                            })
+                        };
+    
+                        return WidgetHelpers.WidgetConfigurationSave.Valid(customSettings);
+                    }
+                }
+            });
+
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+</head>
+<body>
+    <div class="widget-configuration">
+        <div class="single-line-text-input">
+            <label>T&iacute;tulo</label>
+            <input id="title" type="text"></input>
+        </div>
+        <div class="single-line-text-input">
+            <label>Subt&iacute;tulo</label>
+            <input id="sub-title" type="text"></input>
+        </div>
+        <div class="single-line-text-input">
+            <label>Conte&uacute;do</label>
+            <input id="content" type="text"></input>
+        </div>        
+    </div>
+</body>
+</html>
